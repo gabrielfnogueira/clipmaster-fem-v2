@@ -24,6 +24,7 @@ class Application extends React.Component {
     this.addClipping = this.addClipping.bind(this);
     this.fetchClippings = this.fetchClippings.bind(this);
     this.handleWriteToClipboard = this.handleWriteToClipboard.bind(this);
+    this.handleRemove = this.handleRemove.bind(this);
   }
 
   componentDidMount() {
@@ -50,6 +51,10 @@ class Application extends React.Component {
     if (clipping) writeToClipboard(clipping.content);
   }
 
+  handleRemove(id) {
+    database('clippings').where('id', id).delete().then(this.fetchClippings);
+  }
+
   render() {
     return (
       <div className="container">
@@ -62,7 +67,12 @@ class Application extends React.Component {
         <section className="content">
           <div className="clippings-list">
             {this.state.clippings.map((clipping) => (
-              <Clipping content={clipping.content} key={clipping.id} />
+              <Clipping
+                content={clipping.content}
+                key={clipping.id}
+                id={clipping.id}
+                onRemove={this.handleRemove}
+              />
             ))}
           </div>
         </section>
@@ -71,7 +81,7 @@ class Application extends React.Component {
   }
 }
 
-const Clipping = ({ content }) => (
+const Clipping = ({ content, id, onRemove }) => (
   <article className="clippings-list-item">
     <div className="clipping-text" disabled>
       {content}
@@ -81,6 +91,9 @@ const Clipping = ({ content }) => (
         &rarr; Clipboard
       </button>
       <button>Update</button>
+      <button className="remove-clipping" onClick={() => onRemove(id)}>
+        Remove
+      </button>
     </div>
   </article>
 );
