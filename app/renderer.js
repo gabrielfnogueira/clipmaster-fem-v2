@@ -3,7 +3,7 @@ import { render } from 'react-dom';
 
 import { clipboard, ipcRenderer } from 'electron';
 
-const writeToClipboard = content => {
+const writeToClipboard = (content) => {
   clipboard.writeText(content);
 };
 
@@ -25,6 +25,7 @@ class Application extends React.Component {
 
   componentDidMount() {
     ipcRenderer.on('create-new-clipping', this.addClipping);
+    ipcRenderer.on('write-to-clipboard', this.handleWriteToClipboard);
   }
 
   addClipping() {
@@ -42,7 +43,7 @@ class Application extends React.Component {
 
   handleWriteToClipboard() {
     const clipping = this.state.clippings[0];
-    if (clipping) writeToClipboard(clipping);
+    if (clipping) writeToClipboard(clipping.content);
   }
 
   render() {
@@ -56,7 +57,7 @@ class Application extends React.Component {
 
         <section className="content">
           <div className="clippings-list">
-            {this.state.clippings.map(clipping => (
+            {this.state.clippings.map((clipping) => (
               <Clipping content={clipping.content} key={clipping.id} />
             ))}
           </div>
